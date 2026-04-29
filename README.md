@@ -4,7 +4,7 @@ A static page that embeds a Blackthorn Events registration page via the
 `events.blackthorn.io/loader` script, and forwards UTM parameters from the
 parent page's URL into the embedded experience.
 
-Live: https://crysislinux.github.io/blackthorn-iframe-utm-demo/
+Live: https://crysislinux.github.io/blackthorn-iframe-utm-demo/?utm_source=newsletter&utm_custom=spring
 
 ## Configure the embedded page
 
@@ -55,6 +55,11 @@ To persist the forwarded UTMs on the attendee record:
 
 5. Open the event using the preview URL — or click **Update** on the event — so
    the form changes take effect on the embedded registration page.
+
+After someone registers through the embedded form, the Attendee record shows
+the captured UTM values:
+
+![Attendee detail showing UTM Source = newsletter and UTM Custom = spring captured from the registration](docs/utm-attendee.png)
 
 ## Try it locally
 
