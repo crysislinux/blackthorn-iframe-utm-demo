@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blackthorn Events iframe with UTM forwarding</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #fafafb;
+      --surface: #ffffff;
+      --text: #18181b;
+      --muted: #5f5f6b;
+      --border: #e4e4e7;
+      --accent: #2563eb;
+      --code-bg: #f1f1f4;
+      --pill-bg: #eef2ff;
+      --pill-text: #3730a3;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    main { max-width: 880px; margin: 0 auto; padding: 48px 24px 64px; }
+    header { margin-bottom: 32px; }
+    .eyebrow {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--pill-text);
+      background: var(--pill-bg);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .lede { font-size: 17px; color: var(--muted); margin: 0 0 12px; max-width: 60ch; }
+    .lede + .lede { margin-top: 4px; }
+    code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.92em;
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    }
+    .detected {
+      margin-top: 20px;
+      padding: 12px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 6px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .detected.has-utms { color: var(--text); }
+    .detected b { color: var(--text); font-weight: 600; }
+    .embed-section { margin-top: 32px; }
+    .embed-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <span class="eyebrow">Demo</span>
+      <h1>Blackthorn Events iframe with UTM forwarding</h1>
+      <p class="lede">
+        This page embeds a Blackthorn Events registration page via the
+        <code>events.blackthorn.io/loader</code> script, and forwards UTM
+        parameters from this page's URL into the embedded experience so
+        attribution flows through to Blackthorn.
+      </p>
+      <p class="lede">
+        Try opening this page with UTM parameters appended, e.g.
+        <code>?utm_source=newsletter&amp;utm_custom=spring</code>.
+      </p>
+      <p class="detected" id="detected"></p>
+    </header>
+
+    <section class="embed-section">
+      <div class="embed-label">Embedded registration</div>
+      <div id="embed"></div>
+    </section>
+  </main>
+
+  <script>
+    // === Edit this one line to point at a different Blackthorn Events page ===
+    const DATA_PATH = "/en/4PyFnx6/g/C0P27sDc5B";
+    // =========================================================================
+
+    const FORWARDED_PARAMS = [
+      "utm_source",
+      "utm_custom",
+    ];
+
+    const parentParams = new URLSearchParams(window.location.search);
+    const forwarded = new URLSearchParams();
+    for (const key of FORWARDED_PARAMS) {
+      const value = parentParams.get(key);
+      if (value !== null) forwarded.set(key, value);
+    }
+
+    const forwardedString = forwarded.toString();
+    const dataPath = forwardedString
+      ? `${DATA_PATH}?${forwardedString}`
+      : DATA_PATH;
+
+    const detected = document.getElementById("detected");
+    if (forwardedString) {
+      detected.classList.add("has-utms");
+      detected.textContent = `Detected and forwarding: ${forwardedString}`;
+    } else {
+      detected.textContent =
+        "No UTM parameters detected on this URL — the embed loads with the default path.";
+    }
+
+    const loader = document.createElement("script");
+    loader.src = "https://events.blackthorn.io/loader";
+    loader.setAttribute("data-path", dataPath);
+    document.getElementById("embed").appendChild(loader);
+  </script>
+</body>
+</html>
